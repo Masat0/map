@@ -1,53 +1,81 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>amMap example</title>
 
         <link rel="stylesheet" href="ammap/ammap.css" type="text/css">
-        <script src="ammap/ammap.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <link rel="stylesheet" href="jquery-ui.min.css" type="text/css">
+  <script src="ammap/ammap.js" type="text/javascript"></script>
+  <script src="jquery-3.1.1.min.js" type="text/javascript"></script>
+        <script src="jquery-ui.min.js" type="text/javascript"></script>
         <!-- check ammap/maps/js/ folder to see all available countries -->
         <!-- map file should be included after ammap.js -->
-		<script src="ammap/maps/js/russiaHigh.js" type="text/javascript"></script>
-        <script>
-
-			var map;
-
-			AmCharts.ready(function() {
-			    map = new AmCharts.AmMap();
-
-
-			    map.balloon.color = "#000000";
-
-			    var dataProvider = {
-			        mapVar: AmCharts.maps.russiaHigh,
-			        getAreasFromMap:true
-			    };
-
-			    map.dataProvider = dataProvider;
-
-			    map.areasSettings = {
-			        autoZoom: true,
-			        selectedColor: "#CC0000"
-			    };
-			    
-			    map.mouseWheelZoomEnabled = true;
-			    map.zoomDuration = 0;
-			    map.dragMap = false;
-			    map.backgroundZoomsToTop = true;
-
-			    //map.smallMap = new AmCharts.SmallMap();
-
-			    map.write("mapdiv");
-
-			});
-
-        </script>
+  <script src="ammap/maps/js/russiaHigh.js" type="text/javascript"></script>
+        <script src="app.js" type="text/javascript"></script>
     </head>
 
     <body>
-        <div id="mapdiv" style="width: 1024px; background-color:#EEEEEE; height: 600px;"></div>
+
+<div class="wrapper">
+
+  <div class="header">
+    
+  </div><!-- .header-->
+
+  <div class="middle">
+
+    <div class="container">
+      <div class="content">
+        <div id="mapdiv"></div>
+	<div id="question"></div>
+	<div class="count">
+	  <strong id="countRight">0</strong>
+	  <strong class="semicolumn">:</strong>
+	  <strong id="countWrong">0</strong>
+	</div>
+      </div><!-- .content-->
+    </div><!-- .container-->
+
+    <div class="right-sidebar">
+      <form action="#">
+        <fieldset>
+	  <label for="mode">Выберите режим</label>
+	  <select name="mode" id="mode">
+	    <option value="testing" selected="selected">тестирование</option>
+	    <option value="learning">изучение</option>
+	  </select>
+
+	  <label for="projection">Выберите проекцию</label>
+	  <select name="projection" id="projection">
+	    <option>winkel3</option>
+	    <option>eckert3</option>
+	    <option>eckert5</option>
+	    <option>eckert6</option>
+	    <option>miller</option>
+	    <option>equirectangular</option>
+	    <option value="mercator" selected="selected">mercator (default)</option>
+	  </select>
+
+	  <label for="complexity">Выберите сложность</label>
+	  <select name="complexity" id="complexity">
+	    <option value="10" selected="selected">без подсказок</option>
+	    <option value="5">угаданные регионы помечаются</option>
+	  </select>
+	  
+	</fieldset>
+      </form>
+    </div><!-- .right-sidebar -->
+
+  </div><!-- .middle-->
+
+</div><!-- .wrapper -->
+
+<div class="footer">
+  Beaver, 2017
+</div><!-- .footer -->
+
     </body>
 
 </html>
