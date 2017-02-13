@@ -64,7 +64,7 @@ body {
 -----------------------------------------------------------------------------*/
 .header {
 	height: 20px;
-	background: #FFE680;
+	background: #BFF08E;
 }
 
 
@@ -97,18 +97,35 @@ body {
 #question {
   padding: 10px 0 10px 0;
   text-align: center !important;
-  font-size: 25px;
+  font-size: 24px;
+}
+#question .region {
+  font-weight: bold !important;
+  font-style: oblique !important;
+  /*color: blue !important;*/
 }
 .count {
   padding: 10px 0 10px 0;
   text-align: center !important;
+  font-size: 24px;
+}
+#remainder {
+  color: blue;
+  padding-right: 50px;
   font-size: 30px;
 }
 #countRight {
   color: green;
+  font-size: 30px;
 }
 #countWrong {
   color: red;
+  font-size: 30px;
+  padding-right: 50px;
+}
+#percent {
+  color: blue;
+  font-size: 30px;
 }
 /* Right Sidebar
 -----------------------------------------------------------------------------*/

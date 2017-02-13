@@ -29,24 +29,28 @@
     <div class="container">
       <div class="content">
         <div id="mapdiv"></div>
-	<div id="question"></div>
-	<div class="count">
-	  <strong id="countRight">0</strong>
-	  <strong class="semicolumn">:</strong>
-	  <strong id="countWrong">0</strong>
+	<div id="testing">
+	  <div id="question"></div>
+	  <div class="count">
+	    Осталось вопросов: <strong id="remainder">85</strong>
+	    Счет: <strong id="countRight">0</strong>
+	    <strong class="semicolumn"> - </strong>
+	    <strong id="countWrong">0</strong>
+	    (в процентах <strong id="percent">0.00 %</strong>)
+	  </div>
 	</div>
       </div><!-- .content-->
     </div><!-- .container-->
 
     <div class="right-sidebar">
       <form action="#">
-        <fieldset>
 	  <label for="mode">Выберите режим</label>
 	  <select name="mode" id="mode">
 	    <option value="testing" selected="selected">тестирование</option>
 	    <option value="learning">изучение</option>
 	  </select>
 
+        <fieldset id="testing_settings">
 	  <label for="projection">Выберите проекцию</label>
 	  <select name="projection" id="projection">
 	    <option>winkel3</option>
@@ -64,6 +68,7 @@
 	    <option value="5">угаданные регионы помечаются</option>
 	  </select>
 	  
+	  <input type="submit" value="Начать заново">
 	</fieldset>
       </form>
     </div><!-- .right-sidebar -->

@@ -9,29 +9,46 @@ var countWrongAnswer = 0;
 
 var complexity = 10;
 
+var countQuestions = 85;
+var remainder = countQuestions;
+
+var projection = 'mercator';
+var center = {
+  'mercator': {'longitude' : 104.992, 'latitude': 69.624},
+  'winkel3': {'longitude' : 95.2244, 'latitude': 57.6609},
+  'eckert3': {'longitude' : 102.6948, 'latitude': 59.4759},
+  'eckert5': {'longitude' : 101.6643, 'latitude': 59.4752},
+  'eckert6': {'longitude' : 97.3488, 'latitude': 55.3398},
+  'miller': {'longitude' : 104.9948, 'latitude':  63.3411},
+  'equirectangular': {'longitude' : 104.9948, 'latitude':  59.4757}
+};
+
 function getRandom(min, max) {
    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function regionClicked(event) {
-  if(mode == "testing") {
+  console.log(event.mapObject.id);
+  if(mode == "testing" && event.mapObject.id) {
     if(questionCode == event.mapObject.id) {
        countRightAnswer++;
-       if(complexity <= 5) {
+       //if(complexity <= 5) {
         var area = event.mapObject;
-        area.showAsSelected = true;
+        area.showAsSelected = ((complexity <= 5) ? true : false);
         event.chart.returnInitialColor(area);
-      }
+      //}
     } else {
       countWrongAnswer++;
-      if(complexity <= 5) {
+      //if(complexity <= 5) {
         var area = event.mapObject;
         area.showAsSelected = false;
         event.chart.returnInitialColor(area);
-      }
+      //}
     }
     $( "#countRight" ).html(countRightAnswer);
     $( "#countWrong" ).html(countWrongAnswer);
+    $( "#remainder" ).html(remainder);
+    $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
     getQuestion();
   }
 }
@@ -40,7 +57,7 @@ function regionClicked(event) {
 function getQuestion() {
 
   if(questions.length == 0) {
-    map.addLabel(400, 200, 'Вы знаете регионы России на '+(Math.round(countRightAnswer/(countRightAnswer+countWrongAnswer)*100))+'%', 'left', 20, 'black', 0, 100, true);
+    //map.addLabel(400, 200, 'Вы знаете регионы России на '+(Math.round(countRightAnswer/(countRightAnswer+countWrongAnswer)*100))+'%', 'left', 20, 'black', 0, 100, true);
     return;
   }
   index = getRandom(0, questions.length);
@@ -49,13 +66,14 @@ function getQuestion() {
   
   map.clearLabels();
   
-  $( "#question" ).html('Где находится '+q.title+' ?');
+  $("#question").html('Где находится <span class="region">'+q.title+'</span>?');
   //map.addLabel(600, 10, 'Где находится '+q.title+' ?', 'left', 14, '#111111', 0, 100, true);
   //map.addLabel(900, 10, ''+countRightAnswer, 'left', 20, 'green', 0, 100, true);
   //map.addLabel(920, 10, ':', 'left', 20, 'black', 0, 100, true);
   //map.addLabel(940, 10, ''+countWrongAnswer, 'left', 20, 'red', 0, 100, true);
   
   questions.splice(index, 1);
+  remainder--;
   
 }
 
@@ -92,11 +110,17 @@ AmCharts.ready(function() {
       //autoZoom: true,
       "selectable": true,
       "balloonText": "",
-      "selectedColor": undefined
+      "selectedColor": undefined,
+      "color": '#FFE680',
+      "rollOverColor": '#FFEE50',
+      "rollOverOutlineColor": '#DDDD50'
     };
+    
+    //FFE680 FFE7A9
     
     map.mouseWheelZoomEnabled = true;
     map.zoomDuration = 0;
+    map.zoomControl.zoomControlEnabled = false;
     
     map.zoomControl.maxZoomLevel = 8;
     
@@ -108,13 +132,14 @@ AmCharts.ready(function() {
     map.addListener("clickMapObject", regionClicked);
     //map.smallMap = new AmCharts.SmallMap();
     
-
-    
     function zoomCompleted() {
       if(map.zoomLevel() == 1) {
+        
+        if(center[projection]) {
+          map.zoomToLongLat(1, center[projection].longitude, center[projection].latitude);
+        }
       }
     }
-    
     
     map.balloonLabelFunction = function(mapObject, ammap) {
       if(mode == "learning") {
@@ -137,9 +162,16 @@ $( function() {
   $( "#mode" ).selectmenu({
     change: function( event, ui ) {
       mode = $( "#mode" ).val();
-      map.clearLabels();
+//      map.clearLabels();
       if(mode == "testing") {
         initTest();
+        $( "#countRight" ).html(0);
+        $( "#countWrong" ).html(0);        
+        $( "#testing_settings" ).show();
+        $( "#testing" ).show();
+      } else {
+        $( "#testing_settings" ).hide();
+        $( "#testing" ).hide();
       }
       map.validateData();
     }
@@ -149,9 +181,7 @@ $( function() {
     change: function( event, ui ) {
       complexity = $( "#complexity" ).val();
       if(mode == "testing") {
-        
         map.areasSettings.selectedColor = (complexity <= 5 ? 'green' : undefined);
-        initTest();
       }
       map.validateData();
     }
@@ -159,10 +189,21 @@ $( function() {
       
   $( "#projection" ).selectmenu({
     change: function( event, ui ) {
-      console.log(event);
       map.projection = $( "#projection" ).val();
+      projection = $( "#projection" ).val();
       map.validateData();
+      console.log(map.zoomLongitude());
+      console.log(map.zoomLatitude());
+      
     }
   });
 
+  $(".right-sidebar input[type=submit]" ).button();
+  $( "button, input, a" ).click( function( event ) {
+      event.preventDefault();
+      if(mode == "testing") {
+        initTest();
+      }
+      map.validateData();
+  });  
 });
