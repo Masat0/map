@@ -1,6 +1,7 @@
 var map;
 var mode = "testing";
 var questions = [];
+var store_questions = [];
 
 var questionCode = '';
 
@@ -9,10 +10,12 @@ var countWrongAnswer = 0;
 
 var complexity = 10;
 
-var countQuestions = 85;
-var remainder = countQuestions;
+var countQuestions = 83;
+var remainder = countQuestions-1;
 
 var timer = "yes";
+
+var countCheck = 0;
 
 var projection = 'mercator';
 var center = {
@@ -59,6 +62,12 @@ function regionClicked(event) {
 function getQuestion() {
 
   if(questions.length == 0) {
+    $( function() {
+      $( "#dialog" ).dialog({
+        modal: true
+      });
+    });
+  
     //map.addLabel(400, 200, 'Вы знаете регионы России на '+(Math.round(countRightAnswer/(countRightAnswer+countWrongAnswer)*100))+'%', 'left', 20, 'black', 0, 100, true);
     return;
   }
@@ -88,6 +97,11 @@ function initTest() {
     $( "#countWrong" ).html(countWrongAnswer);
     $( "#remainder" ).html(remainder);
     $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
+    console.log(questions);
+    console.log(store_questions);
+    store_questions.forEach(function (element, index, array){
+      questions.push({'id': element.id, 'title': element.title});
+    });
     getQuestion();
   }
   if(timer == "yes") {
@@ -108,9 +122,9 @@ AmCharts.ready(function() {
     SVG = AmCharts.maps.russiaHigh;
     
     SVG.svg.g.path.forEach(function (element, index, array){
-      questions.push({'id': element.id, 'title': element.title});
+      store_questions.push({'id': element.id, 'title': element.title});
     });
-    
+
     var dataProvider = {
       mapVar: SVG,
       getAreasFromMap:true
