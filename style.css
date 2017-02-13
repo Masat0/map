@@ -64,7 +64,7 @@ body {
 -----------------------------------------------------------------------------*/
 .header {
 	height: 20px;
-	background: #BFF08E;
+	background: #FFFFFF;
 }
 
 
@@ -91,7 +91,7 @@ body {
 	height: 100%;  
 }
 #mapdiv {
-  min-height: 600px;
+  min-height: 400px;
   min-width: 800px;
 }
 #question {
@@ -127,6 +127,14 @@ body {
   color: blue;
   font-size: 30px;
 }
+.time {
+  padding-left: 50px;
+}
+#time {
+  color: blue;
+  font-size: 30px;
+}
+
 /* Right Sidebar
 -----------------------------------------------------------------------------*/
 .right-sidebar {
@@ -135,7 +143,13 @@ body {
 	margin-left: -250px;
 	position: relative;
 }
-
+.right-sidebar label {
+  display: inline-block;
+  padding-top: 10px;
+}
+#start {
+  margin-top: 20px;
+}
 
 /* Footer
 -----------------------------------------------------------------------------*/
@@ -143,6 +157,6 @@ body {
 	margin: -20px auto 0;
 	min-width: 800px;
 	height: 20px;
-	background: #BFF08E;
+	background: #FFFFFF;
 	position: relative;
 }

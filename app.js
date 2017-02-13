@@ -12,6 +12,8 @@ var complexity = 10;
 var countQuestions = 85;
 var remainder = countQuestions;
 
+var timer = "yes";
+
 var projection = 'mercator';
 var center = {
   'mercator': {'longitude' : 104.992, 'latitude': 69.624},
@@ -28,7 +30,7 @@ function getRandom(min, max) {
 }
 
 function regionClicked(event) {
-  console.log(event.mapObject.id);
+  //console.log(event.mapObject.id);
   if(mode == "testing" && event.mapObject.id) {
     if(questionCode == event.mapObject.id) {
        countRightAnswer++;
@@ -81,9 +83,21 @@ function initTest() {
   if(mode == "testing") {
     countRightAnswer = 0;
     countWrongAnswer = 0;
-
+    remainder = countQuestions;
+    $( "#countRight" ).html(countRightAnswer);
+    $( "#countWrong" ).html(countWrongAnswer);
+    $( "#remainder" ).html(remainder);
+    $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
     getQuestion();
-  }  
+  }
+  if(timer == "yes") {
+    $("#time").stopTime('test');
+    $("#time").everyTime(1000, 'test', function(i) {
+      var minute = Math.floor(i/60);
+      var sec = (i-60*minute);
+      $(this).text((minute < 10 ? '0'+minute : minute) + ':' + (sec < 10 ? '0' + sec : sec));
+    });
+  }
 }
 
 AmCharts.ready(function() {
@@ -151,13 +165,23 @@ AmCharts.ready(function() {
     
     initTest();
     
-    map.write("mapdiv");
-    map.validateData();
+    //map.write("mapdiv");
+    //map.validateData();
 
 });
 
 
 $( function() {
+  $( document ).ready(function(){
+
+    var h = $( document ).height();
+    var w= $( document ).width();
+ 
+    $( "#mapdiv" ).height(h-120);
+    //$( "#mapdiv" ).width(w-250);
+    map.write("mapdiv");
+    map.validateData();
+  });
 
   $( "#mode" ).selectmenu({
     change: function( event, ui ) {
@@ -169,9 +193,11 @@ $( function() {
         $( "#countWrong" ).html(0);        
         $( "#testing_settings" ).show();
         $( "#testing" ).show();
+        $( "#question" ).show();
       } else {
         $( "#testing_settings" ).hide();
         $( "#testing" ).hide();
+        $( "#question" ).hide();
       }
       map.validateData();
     }
@@ -192,9 +218,23 @@ $( function() {
       map.projection = $( "#projection" ).val();
       projection = $( "#projection" ).val();
       map.validateData();
-      console.log(map.zoomLongitude());
-      console.log(map.zoomLatitude());
-      
+      //console.log(map.zoomLongitude());
+      //console.log(map.zoomLatitude());
+    }
+  });
+
+  $( "#timer" ).selectmenu({
+    change: function( event, ui ) {
+      timer = $( "#timer" ).val();
+      if(timer == "yes") {
+        $( "#time" ).show();
+        $( "span.time" ).show();
+      } else {
+        $("#time").stopTime('test');
+        $("#time").text('00:00');
+        $( "#time" ).hide();
+        $( "span.time" ).hide();        
+      }
     }
   });
 

@@ -10,6 +10,8 @@
   <script src="ammap/ammap.js" type="text/javascript"></script>
   <script src="jquery-3.1.1.min.js" type="text/javascript"></script>
         <script src="jquery-ui.min.js" type="text/javascript"></script>
+        <script src="jquery.timers.js" type="text/javascript"></script>
+        
         <!-- check ammap/maps/js/ folder to see all available countries -->
         <!-- map file should be included after ammap.js -->
   <script src="ammap/maps/js/russiaHigh.js" type="text/javascript"></script>
@@ -28,17 +30,18 @@
 
     <div class="container">
       <div class="content">
+		<div id="question"></div>
         <div id="mapdiv"></div>
-	<div id="testing">
-	  <div id="question"></div>
-	  <div class="count">
-	    Осталось вопросов: <strong id="remainder">85</strong>
-	    Счет: <strong id="countRight">0</strong>
-	    <strong class="semicolumn"> - </strong>
-	    <strong id="countWrong">0</strong>
-	    (в процентах <strong id="percent">0.00 %</strong>)
-	  </div>
-	</div>
+		<div id="testing">
+			<div class="count">
+			Осталось вопросов: <strong id="remainder">85</strong>
+			Счет: <strong id="countRight">0</strong>
+			<strong class="semicolumn"> - </strong>
+			<strong id="countWrong">0</strong>
+			(в процентах <strong id="percent">0.00 %</strong>)
+			<span class="time">Таймер: </span><strong id="time">00:00</strong>
+			</div>
+		</div>
       </div><!-- .content-->
     </div><!-- .container-->
 
@@ -67,8 +70,14 @@
 	    <option value="10" selected="selected">без подсказок</option>
 	    <option value="5">угаданные регионы помечаются</option>
 	  </select>
-	  
-	  <input type="submit" value="Начать заново">
+
+	  <label for="timer">Включить таймер?</label>
+	  <select name="timer" id="timer">
+	    <option value="no">нет</option>
+	    <option value="yes" selected="selected">да</option>
+	  </select>
+	  	  
+	  <input id="start" type="submit" value="Начать заново">
 	</fieldset>
       </form>
     </div><!-- .right-sidebar -->
@@ -78,7 +87,7 @@
 </div><!-- .wrapper -->
 
 <div class="footer">
-  Beaver, 2017
+  &copy; 2017
 </div><!-- .footer -->
 
     </body>
