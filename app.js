@@ -62,6 +62,7 @@ function regionClicked(event) {
 function getQuestion() {
 
   if(questions.length == 0) {
+    $("#time").stopTime('test');
     $( function() {
       $( "#dialog" ).dialog({
         modal: true
@@ -97,8 +98,6 @@ function initTest() {
     $( "#countWrong" ).html(countWrongAnswer);
     $( "#remainder" ).html(remainder);
     $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
-    console.log(questions);
-    console.log(store_questions);
     store_questions.forEach(function (element, index, array){
       questions.push({'id': element.id, 'title': element.title});
     });
