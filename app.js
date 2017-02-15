@@ -10,7 +10,7 @@ var countWrongAnswer = 0;
 
 var complexity = 10;
 
-var countQuestions = 83;
+var countQuestions = 85;
 var remainder = countQuestions-1;
 
 var timer = "yes";
@@ -18,6 +18,10 @@ var timer = "yes";
 var countCheck = 0;
 
 var projection = 'mercator';
+
+var rightRegions = [];
+var wrongRegions = [];
+
 var center = {
   'mercator': {'longitude' : 104.992, 'latitude': 69.624},
   'winkel3': {'longitude' : 95.2244, 'latitude': 57.6609},
@@ -37,6 +41,7 @@ function regionClicked(event) {
   if(mode == "testing" && event.mapObject.id) {
     if(questionCode == event.mapObject.id) {
        countRightAnswer++;
+       rightRegions.push(questionCode);
        //if(complexity <= 5) {
         var area = event.mapObject;
         area.showAsSelected = ((complexity <= 5) ? true : false);
@@ -44,6 +49,7 @@ function regionClicked(event) {
       //}
     } else {
       countWrongAnswer++;
+      wrongRegions.push(questionCode);
       //if(complexity <= 5) {
         var area = event.mapObject;
         area.showAsSelected = false;
@@ -62,12 +68,7 @@ function regionClicked(event) {
 function getQuestion() {
 
   if(questions.length == 0) {
-    $("#time").stopTime('test');
-    $( function() {
-      $( "#dialog" ).dialog({
-        modal: true
-      });
-    });
+    stopTest();
   
     //map.addLabel(400, 200, 'Вы знаете регионы России на '+(Math.round(countRightAnswer/(countRightAnswer+countWrongAnswer)*100))+'%', 'left', 20, 'black', 0, 100, true);
     return;
@@ -89,6 +90,53 @@ function getQuestion() {
   
 }
 
+function stopTest() {
+  $("#time").stopTime('test');
+
+  $( "#amountRight" ).html(countRightAnswer);
+  $( "#amountAll" ).html(countQuestions);
+  $( "#percentRight" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
+
+  
+  $( function() {
+    $( "#dialog" ).dialog({
+      modal: true,
+      width: 400,
+      buttons: {
+        "Еще раз": function() {
+          initTest();
+          $( this ).dialog( "close" );
+          map.validateData();
+        },
+        "Показать ответы": function() {
+          rightRegions.forEach(function (element, index, array){
+              var area = map.getObjectById(element);
+              area.color = 'green';
+              area.colorReal = area.color;
+              area.rollOverColor = 'green';
+              area.validate();
+          });
+          wrongRegions.forEach(function (element, index, array){
+            //console.log(element);
+              var area = map.getObjectById(element);
+              area.color = 'red';
+              area.colorReal = area.color;
+              area.rollOverColor = 'red';
+              area.validate();
+          });
+          //map.areaSettings.rollOverColor = undefined;
+          mode = "showing_answer";
+          map.validateData();
+          $( this ).dialog( "close" );
+        },
+        "Закрыть": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+}
+
 function initTest() {
   if(mode == "testing") {
     countRightAnswer = 0;
@@ -98,9 +146,19 @@ function initTest() {
     $( "#countWrong" ).html(countWrongAnswer);
     $( "#remainder" ).html(remainder);
     $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
+    
     store_questions.forEach(function (element, index, array){
       questions.push({'id': element.id, 'title': element.title});
+      var area = map.getObjectById(element.id);
+      if(area) {
+        area.color = '#FFE680';
+        area.colorReal = area.color;
+        area.rollOverColor = '#FFEE50';
+        area.validate();
+      }
     });
+    rightRegions = [];
+    wrongRegions = [];
     getQuestion();
   }
   if(timer == "yes") {
@@ -169,7 +227,7 @@ AmCharts.ready(function() {
     }
     
     map.balloonLabelFunction = function(mapObject, ammap) {
-      if(mode == "learning") {
+      if(mode == "learning" || mode == "showing_answer") {
         return mapObject.title;
       } else {
         return "";
@@ -252,11 +310,20 @@ $( function() {
   });
 
   $(".right-sidebar input[type=submit]" ).button();
-  $( "button, input, a" ).click( function( event ) {
+  $( "#start" ).click( function( event ) {
       event.preventDefault();
+      if(mode == "showing_answer") {
+        mode = "testing";
+      }
       if(mode == "testing") {
         initTest();
       }
       map.validateData();
-  });  
+  });
+  $( "#end" ).click( function( event ) {
+      event.preventDefault();
+      if(mode == "testing") {
+        stopTest();
+      }
+  });    
 });

@@ -59,6 +59,9 @@ body {
 	height: 100%;
 }
 
+#dialog {
+  display: none;
+}
 
 /* Header
 -----------------------------------------------------------------------------*/
@@ -149,6 +152,11 @@ body {
 }
 #start {
   margin-top: 20px;
+  width: 190px;
+}
+#end {
+  margin-top: 20px;
+  width: 190px;
 }
 
 /* Footer
