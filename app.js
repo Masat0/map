@@ -22,6 +22,8 @@ var projection = 'mercator';
 var rightRegions = [];
 var wrongRegions = [];
 
+var prevZoomLevel = 1;
+
 var center = {
   'mercator': {'longitude' : 104.992, 'latitude': 69.624},
   'winkel3': {'longitude' : 95.2244, 'latitude': 57.6609},
@@ -69,8 +71,6 @@ function getQuestion() {
 
   if(questions.length == 0) {
     stopTest();
-  
-    //map.addLabel(400, 200, 'Вы знаете регионы России на '+(Math.round(countRightAnswer/(countRightAnswer+countWrongAnswer)*100))+'%', 'left', 20, 'black', 0, 100, true);
     return;
   }
   index = getRandom(0, questions.length);
@@ -80,11 +80,6 @@ function getQuestion() {
   map.clearLabels();
   
   $("#question").html('Где находится <span class="region">'+q.title+'</span>?');
-  //map.addLabel(600, 10, 'Где находится '+q.title+' ?', 'left', 14, '#111111', 0, 100, true);
-  //map.addLabel(900, 10, ''+countRightAnswer, 'left', 20, 'green', 0, 100, true);
-  //map.addLabel(920, 10, ':', 'left', 20, 'black', 0, 100, true);
-  //map.addLabel(940, 10, ''+countWrongAnswer, 'left', 20, 'red', 0, 100, true);
-  
   questions.splice(index, 1);
   remainder--;
   
@@ -171,11 +166,25 @@ function initTest() {
   }
 }
 
+function zoomCompleted(obj) {
+  console.log(obj);
+
+    console.log(map.zoomLevel());
+    console.log(map.zoomLongitude());
+    console.log(map.zoomLatitude());      
+  if(map.zoomLevel() == 1) {
+    
+    if(center[projection]) {
+      map.zoomToLongLat(1, center[projection].longitude, center[projection].latitude);
+    }
+  }
+}
+
 AmCharts.ready(function() {
     map = new AmCharts.AmMap();
 
     map.balloon.color = "#000000";
-
+    map.projection = projection;
     SVG = AmCharts.maps.russiaHigh;
     
     SVG.svg.g.path.forEach(function (element, index, array){
@@ -192,7 +201,7 @@ AmCharts.ready(function() {
     //console.log(map.dataProvider);
 
     map.areasSettings = {
-      //autoZoom: true,
+      autoZoom: false,
       "selectable": true,
       "balloonText": "",
       "selectedColor": undefined,
@@ -207,23 +216,22 @@ AmCharts.ready(function() {
     map.zoomDuration = 0;
     map.zoomControl.zoomControlEnabled = false;
     
+    map.zoomControl.minZoomLevel = 1;
     map.zoomControl.maxZoomLevel = 8;
     
     map.addListener("zoomCompleted", zoomCompleted);
+    map.addListener("rendered", mapRendered);
     map.dragMap = false;
     map.backgroundZoomsToTop = true;
     
 
+        
     map.addListener("clickMapObject", regionClicked);
     //map.smallMap = new AmCharts.SmallMap();
     
-    function zoomCompleted() {
-      if(map.zoomLevel() == 1) {
-        
-        if(center[projection]) {
-          map.zoomToLongLat(1, center[projection].longitude, center[projection].latitude);
-        }
-      }
+    
+
+    function mapRendered() {
     }
     
     map.balloonLabelFunction = function(mapObject, ammap) {
@@ -234,11 +242,7 @@ AmCharts.ready(function() {
       }
     };
     
-    initTest();
-    
-    //map.write("mapdiv");
-    //map.validateData();
-
+    //initTest();
 });
 
 
@@ -249,9 +253,8 @@ $( function() {
     var w= $( document ).width();
  
     $( "#mapdiv" ).height(h-120);
-    //$( "#mapdiv" ).width(w-250);
     map.write("mapdiv");
-    map.validateData();
+    //map.validateData();
   });
 
   $( "#mode" ).selectmenu({
@@ -288,9 +291,16 @@ $( function() {
     change: function( event, ui ) {
       map.projection = $( "#projection" ).val();
       projection = $( "#projection" ).val();
+      console.log(projection);
+        console.log(map.zoomLongitude());
+        console.log(map.zoomLatitude());      
       map.validateData();
-      //console.log(map.zoomLongitude());
-      //console.log(map.zoomLatitude());
+      //if(projection == "mercator") {
+        //center[projection].longitude = map.zoomLongitude();
+        //center[projection].latitude = map.zoomLatitude();
+        console.log(map.zoomLongitude());
+        console.log(map.zoomLatitude());
+      //}
     }
   });
 
@@ -312,6 +322,7 @@ $( function() {
   $(".right-sidebar input[type=submit]" ).button();
   $( "#start" ).click( function( event ) {
       event.preventDefault();
+      //event.stopPropagation();
       if(mode == "showing_answer") {
         mode = "testing";
       }
