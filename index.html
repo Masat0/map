@@ -46,6 +46,11 @@
 		<div id="dialog" title="Ваш результат">
 			<p>Верно указанных регионов <span id="amountRight"></span> из <span id="amountAll"></span>. Что составляет <span id="percentRight"></span></p>
 		</div>
+		<div id="intro" title="Задача">
+			<p>Укажите на карте все субъекты Российской Федерации.</p>
+			<p>Выбрать уровень сложности, проекцию карты, режим обучения можно в правой части.</p>
+			<p>Кнопка "Закончить" завершит тест и покажет результат.</p>
+		</div>
     </div><!-- .container-->
 
     <div class="right-sidebar">
@@ -63,15 +68,18 @@
 	    <option>eckert3</option>
 	    <option>eckert5</option>
 	    <option>eckert6</option>
-	    <option>miller</option>
+	    <option selected="selected">miller</option>
 	    <option>equirectangular</option>
+<!--
 	    <option value="mercator" selected="selected">mercator (default)</option>
+-->
 	  </select>
 
 	  <label for="complexity">Выберите сложность</label>
 	  <select name="complexity" id="complexity">
 	    <option value="10" selected="selected">без подсказок</option>
 	    <option value="5">угаданные регионы помечаются</option>
+	    <option value="4">все ответы помечаются</option>
 	  </select>
 
 	  <label for="timer">Включить таймер?</label>

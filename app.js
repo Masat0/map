@@ -17,7 +17,7 @@ var timer = "yes";
 
 var countCheck = 0;
 
-var projection = 'mercator';
+var projection = 'miller';
 
 var rightRegions = [];
 var wrongRegions = [];
@@ -25,7 +25,7 @@ var wrongRegions = [];
 var prevZoomLevel = 1;
 
 var center = {
-  'mercator': {'longitude' : 104.992, 'latitude': 69.624},
+  //'mercator': {'longitude' : 104.992, 'latitude': 69.624},
   'winkel3': {'longitude' : 95.2244, 'latitude': 57.6609},
   'eckert3': {'longitude' : 102.6948, 'latitude': 59.4759},
   'eckert5': {'longitude' : 101.6643, 'latitude': 59.4752},
@@ -38,6 +38,10 @@ function getRandom(min, max) {
    return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function setColorArea(area, selected, rORw) {
+  
+}
+
 function regionClicked(event) {
   //console.log(event.mapObject.id);
   if(mode == "testing" && event.mapObject.id) {
@@ -46,17 +50,49 @@ function regionClicked(event) {
        rightRegions.push(questionCode);
        //if(complexity <= 5) {
         var area = event.mapObject;
-        area.showAsSelected = ((complexity <= 5) ? true : false);
+        if(complexity <= 5) {
+          area.showAsSelected = true;
+          area.selectedColor = 'green';
+          area.color = 'green';
+          area.colorReal = area.color;
+          area.rollOverColor = 'green';
+          area.validate();
+        } else {
+          // проверить, нужно ли иначе
+          area.color = '#FFE680';
+          area.selectedColor = undefined;
+          area.colorReal = area.color;
+          area.rollOverColor = '#FFEE50';
+          area.validate();
+          area.showAsSelected = false;
+        }
+        //area.validate();
         event.chart.returnInitialColor(area);
-      //}
+
     } else {
       countWrongAnswer++;
       wrongRegions.push(questionCode);
-      //if(complexity <= 5) {
-        var area = event.mapObject;
-        area.showAsSelected = false;
-        event.chart.returnInitialColor(area);
-      //}
+      var area = map.getObjectById(questionCode);
+      if(complexity <= 4) {
+        area.showAsSelected = true;
+        area.selectedColor = 'red';
+        area.color = 'red';
+        area.colorReal = area.color;
+        area.rollOverColor = 'red';
+        area.validate();
+      } else {
+        // проверить, нужно ли иначе
+          area.color = '#FFE680';
+          area.colorReal = area.color;
+          area.selectedColor = undefined;
+          area.rollOverColor = '#FFEE50';
+          area.showAsSelected = false;
+          area.validate();        
+        
+      }
+        //area.validate();
+      event.chart.returnInitialColor(event.mapObject);
+
     }
     $( "#countRight" ).html(countRightAnswer);
     $( "#countWrong" ).html(countWrongAnswer);
@@ -99,11 +135,14 @@ function stopTest() {
       width: 400,
       buttons: {
         "Еще раз": function() {
+          mode = "testing";
           initTest();
           $( this ).dialog( "close" );
           map.validateData();
         },
         "Показать ответы": function() {
+          console.log(rightRegions);
+          console.log(wrongRegions);
           rightRegions.forEach(function (element, index, array){
               var area = map.getObjectById(element);
               area.color = 'green';
@@ -141,12 +180,16 @@ function initTest() {
     $( "#countWrong" ).html(countWrongAnswer);
     $( "#remainder" ).html(remainder);
     $( "#percent" ).html(parseFloat(countRightAnswer/countQuestions*100).toFixed(2)+' %');
+
+    questions = [];
     
     store_questions.forEach(function (element, index, array){
       questions.push({'id': element.id, 'title': element.title});
       var area = map.getObjectById(element.id);
       if(area) {
+        area.showAsSelected = false;
         area.color = '#FFE680';
+        area.selectedColor = undefined;
         area.colorReal = area.color;
         area.rollOverColor = '#FFEE50';
         area.validate();
@@ -167,11 +210,11 @@ function initTest() {
 }
 
 function zoomCompleted(obj) {
-  console.log(obj);
+  //console.log(obj);
 
-    console.log(map.zoomLevel());
-    console.log(map.zoomLongitude());
-    console.log(map.zoomLatitude());      
+    //console.log(map.zoomLevel());
+    //console.log(map.zoomLongitude());
+    //console.log(map.zoomLatitude());      
   if(map.zoomLevel() == 1) {
     
     if(center[projection]) {
@@ -241,7 +284,23 @@ AmCharts.ready(function() {
         return "";
       }
     };
-    
+
+
+  $( function() {
+    $( "#intro" ).dialog({
+      modal: true,
+      width: 400,
+      buttons: {
+        "Начать тест": function() {
+          initTest();
+          $( this ).dialog( "close" );
+        },
+        "Перейти к настройкам": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
     //initTest();
 });
 
@@ -291,15 +350,15 @@ $( function() {
     change: function( event, ui ) {
       map.projection = $( "#projection" ).val();
       projection = $( "#projection" ).val();
-      console.log(projection);
-        console.log(map.zoomLongitude());
-        console.log(map.zoomLatitude());      
+      //console.log(projection);
+        //console.log(map.zoomLongitude());
+        //console.log(map.zoomLatitude());      
       map.validateData();
       //if(projection == "mercator") {
         //center[projection].longitude = map.zoomLongitude();
         //center[projection].latitude = map.zoomLatitude();
-        console.log(map.zoomLongitude());
-        console.log(map.zoomLatitude());
+        //console.log(map.zoomLongitude());
+        //console.log(map.zoomLatitude());
       //}
     }
   });
@@ -323,7 +382,7 @@ $( function() {
   $( "#start" ).click( function( event ) {
       event.preventDefault();
       //event.stopPropagation();
-      if(mode == "showing_answer") {
+      if(mode == "showing_answer" || mode == "stopping") {
         mode = "testing";
       }
       if(mode == "testing") {
@@ -335,6 +394,7 @@ $( function() {
       event.preventDefault();
       if(mode == "testing") {
         stopTest();
+        mode = "stopping";
       }
   });    
 });

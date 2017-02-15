@@ -96,6 +96,7 @@ body {
 #mapdiv {
   min-height: 400px;
   min-width: 800px;
+  margin-left: 20px;
 }
 #question {
   padding: 10px 0 10px 0;
