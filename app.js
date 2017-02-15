@@ -38,9 +38,7 @@ function getRandom(min, max) {
    return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function setColorArea(area, selected, rORw) {
-  
-}
+
 
 function regionClicked(event) {
   //console.log(event.mapObject.id);
@@ -321,13 +319,48 @@ $( function() {
       mode = $( "#mode" ).val();
 //      map.clearLabels();
       if(mode == "testing") {
-        initTest();
-        $( "#countRight" ).html(0);
-        $( "#countWrong" ).html(0);        
+        //initTest();
         $( "#testing_settings" ).show();
         $( "#testing" ).show();
         $( "#question" ).show();
+
+        //$( function() {
+          //$( "#intro" ).dialog({
+            //modal: true,
+            //width: 400,
+            //buttons: {
+              //"Начать тест": function() {
+                //initTest();
+                //$( this ).dialog( "close" );
+              //},
+              //"Перейти к настройкам": function() {
+                //$( this ).dialog( "close" );
+              //}
+            //}
+          //});
+        //});        
       } else {
+        $("#time").stopTime('test');
+
+        $( "#countRight" ).html(0);
+        $( "#countWrong" ).html(0);
+        $( "#remainder" ).html(countQuestions);
+        $( "#percent" ).html('0.00 %');
+        $( "#time" ).html('00:00');
+        $( "#question" ).html('&nbsp;');
+        
+        store_questions.forEach(function (element, index, array){
+          var area = map.getObjectById(element.id);
+          if(area) {
+            area.showAsSelected = false;
+            area.color = '#FFE680';
+            area.selectedColor = undefined;
+            area.colorReal = area.color;
+            area.rollOverColor = '#FFEE50';
+            area.validate();
+          }
+        });
+          
         $( "#testing_settings" ).hide();
         $( "#testing" ).hide();
         $( "#question" ).hide();
