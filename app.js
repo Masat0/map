@@ -60,7 +60,7 @@ function regionClicked(event) {
           area.color = '#FFE680';
           area.selectedColor = undefined;
           area.colorReal = area.color;
-          area.rollOverColor = '#FFEE50';
+          area.rollOverColor = '#EDEDED';
           area.validate();
           area.showAsSelected = false;
         }
@@ -83,7 +83,7 @@ function regionClicked(event) {
           area.color = '#FFE680';
           area.colorReal = area.color;
           area.selectedColor = undefined;
-          area.rollOverColor = '#FFEE50';
+          area.rollOverColor = '#EDEDED';
           area.showAsSelected = false;
           area.validate();        
         
@@ -189,7 +189,7 @@ function initTest() {
         area.color = '#FFE680';
         area.selectedColor = undefined;
         area.colorReal = area.color;
-        area.rollOverColor = '#FFEE50';
+        area.rollOverColor = '#EDEDED';
         area.validate();
       }
     });
@@ -247,8 +247,8 @@ AmCharts.ready(function() {
       "balloonText": "",
       "selectedColor": undefined,
       "color": '#FFE680',
-      "rollOverColor": '#FFEE50',
-      "rollOverOutlineColor": '#DDDD50'
+      "rollOverColor": '#EDEDED',
+      "rollOverOutlineColor": '#ABABAB'
     };
     
     //FFE680 FFE7A9
@@ -356,7 +356,7 @@ $( function() {
             area.color = '#FFE680';
             area.selectedColor = undefined;
             area.colorReal = area.color;
-            area.rollOverColor = '#FFEE50';
+            area.rollOverColor = '#EDEDED';
             area.validate();
           }
         });
