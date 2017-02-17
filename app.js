@@ -2,6 +2,7 @@ var map;
 var mode = "testing";
 var questions = [];
 var store_questions = [];
+var arrayCodeRussianRegions = [];
 
 var questionCode = '';
 
@@ -38,60 +39,84 @@ function getRandom(min, max) {
    return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
+function rollOverRegion(event) {
+  if(mode == "testing" && event.mapObject.id && arrayCodeRussianRegions.indexOf(event.mapObject.id) != -1) {
+    var area = event.mapObject;
+    //console.log(area.rollOverColor);
+    //console.log(area);
+  }
+}
 
 function regionClicked(event) {
-  //console.log(event.mapObject.id);
+  console.log(event.mapObject.id);
+  console.log(arrayCodeRussianRegions.indexOf(event.mapObject.id));
+  if(arrayCodeRussianRegions.indexOf(event.mapObject.id) == -1) { //заграница
+    return false;
+  }
   if(mode == "testing" && event.mapObject.id) {
-    if(questionCode == event.mapObject.id) {
-       countRightAnswer++;
-       rightRegions.push(questionCode);
-       //if(complexity <= 5) {
-        var area = event.mapObject;
-        if(complexity <= 5) {
-          area.showAsSelected = true;
-          area.selectedColor = 'green';
-          area.color = 'green';
-          area.colorReal = area.color;
-          area.rollOverColor = 'green';
-          area.validate();
-        } else {
-          // проверить, нужно ли иначе
-          area.color = '#FFE680';
-          area.selectedColor = undefined;
-          area.colorReal = area.color;
-          area.rollOverColor = '#EDEDED';
-          area.validate();
-          area.showAsSelected = false;
-        }
-        //area.validate();
-        event.chart.returnInitialColor(area);
+    var area = event.mapObject;
+    //if(questionCode == event.mapObject.id) {
+       //countRightAnswer++;
+       //rightRegions.push(questionCode);
+       ////if(complexity <= 5) {
+        //
+        //if(complexity <= 5) {
+          //area.showAsSelected = true;
+          //area.selectedColor = 'green';
+          //area.color = 'green';
+          //area.colorReal = area.color;
+          //area.rollOverColor = 'green';
+          //area.validate();
+        //} else {
+          //// проверить, нужно ли иначе
+          //area.color = '#FFE680';
+          //area.selectedColor = undefined;
+          //area.colorReal = area.color;
+          //area.rollOverColor = '#EDEDED';
+          //area.validate();
+          //area.showAsSelected = false;
+        //}
+        ////area.validate();
+        //event.chart.returnInitialColor(area);
 
-    } else {
-      countWrongAnswer++;
-      wrongRegions.push(questionCode);
-      var area = map.getObjectById(questionCode);
-      if(complexity <= 4) {
-        area.showAsSelected = true;
-        area.selectedColor = 'red';
-        area.color = 'red';
-        area.colorReal = area.color;
-        area.rollOverColor = 'red';
-        area.validate();
-      } else {
-        // проверить, нужно ли иначе
-          area.color = '#FFE680';
-          area.colorReal = area.color;
-          area.selectedColor = undefined;
-          area.rollOverColor = '#EDEDED';
-          area.showAsSelected = false;
-          area.validate();        
+    //} else {
+      //countWrongAnswer++;
+      //wrongRegions.push(questionCode);
+      //var area = map.getObjectById(questionCode);
+      //if(complexity <= 4) {
+        //area.showAsSelected = true;
+        //area.selectedColor = 'red';
+        //area.color = 'red';
+        //area.colorReal = area.color;
+        //area.rollOverColor = 'red';
+        //area.validate();
+      //} 
+      //else {
         
-      }
-        //area.validate();
-      event.chart.returnInitialColor(event.mapObject);
+        //// проверить, нужно ли иначе
+          //area.color = '#FFE680';
+          //area.colorReal = area.color;
+          ////area.selectedColor = undefined;
+          //area.rollOverColor = '#EDEDED';
+          //area.rollOverOutlineColor ='#ABABAB';
+          //area.showAsSelected = false;
+          //area.validate();  
+                
+        
+      //}
+        ////area.validate();
+    //}
+    //area.showAsSelected = true;
+    area.color = '#FFE680';
+          area.colorReal = area.color;
+          area.selectedColor = '#FFE680';
+          area.rollOverColor = '#EDEDED';
+          area.rollOverOutlineColor ='#ABABAB';
+          area.showAsSelected = false;    
+    //event.chart.returnInitialColor(area);
+    area.validate();
+    //event.chart.returnInitialColor((questionCode == event.mapObject.id) ? area : event.mapObject);
 
-    }
     $( "#countRight" ).html(countRightAnswer);
     $( "#countWrong" ).html(countWrongAnswer);
     $( "#remainder" ).html(remainder);
@@ -225,16 +250,21 @@ AmCharts.ready(function() {
     map = new AmCharts.AmMap();
 
     map.balloon.color = "#000000";
+    map.backgroundAlpha = 0.4;
+    map.backgroundColor = "#D1F0F8";
     map.projection = projection;
     SVG = AmCharts.maps.russiaHigh;
+    //SVG = AmCharts.maps.russiaAndNeighbors;
     
     SVG.svg.g.path.forEach(function (element, index, array){
       store_questions.push({'id': element.id, 'title': element.title});
+      arrayCodeRussianRegions.push(element.id);
     });
 
     var dataProvider = {
       mapVar: SVG,
-      getAreasFromMap:true
+      getAreasFromMap:true,
+      areas: AmCharts.maps.listRussianRegion,
     };
 
     map.dataProvider = dataProvider;
@@ -243,12 +273,14 @@ AmCharts.ready(function() {
 
     map.areasSettings = {
       autoZoom: false,
-      "selectable": true,
-      "balloonText": "",
+      "selectable": false,
       "selectedColor": undefined,
-      "color": '#FFE680',
-      "rollOverColor": '#EDEDED',
-      "rollOverOutlineColor": '#ABABAB'
+      "color": '#999999',
+      "rollOverColor": undefined,
+      "rollOverOutlineColor": undefined
+      //"color": '#FFE680',
+      //"rollOverColor": '#EDEDED',
+      //"rollOverOutlineColor": '#ABABAB'
     };
     
     //FFE680 FFE7A9
@@ -260,20 +292,14 @@ AmCharts.ready(function() {
     map.zoomControl.minZoomLevel = 1;
     map.zoomControl.maxZoomLevel = 8;
     
-    map.addListener("zoomCompleted", zoomCompleted);
-    map.addListener("rendered", mapRendered);
-    map.dragMap = false;
-    map.backgroundZoomsToTop = true;
+    //map.addListener("zoomCompleted", zoomCompleted);
+    map.dragMap = true;
+    map.backgroundZoomsToTop = false;
     
-
-        
     map.addListener("clickMapObject", regionClicked);
+    map.addListener("rollOverMapObject", rollOverRegion);
+    
     //map.smallMap = new AmCharts.SmallMap();
-    
-    
-
-    function mapRendered() {
-    }
     
     map.balloonLabelFunction = function(mapObject, ammap) {
       if(mode == "learning" || mode == "showing_answer") {
@@ -374,6 +400,12 @@ $( function() {
       complexity = $( "#complexity" ).val();
       if(mode == "testing") {
         map.areasSettings.selectedColor = (complexity <= 5 ? 'green' : undefined);
+      }
+      if(complexity <= 3) {
+        map.dataProvider.mapVar = AmCharts.maps.russiaAndNeighbors;
+        console.log(AmCharts.maps.russiaAndNeighbors);
+      } else {
+        map.dataProvider.mapVar = AmCharts.maps.russiaHigh;
       }
       map.validateData();
     }
